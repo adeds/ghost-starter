@@ -12,8 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package com.google.engedu.ghost;
+package com.google.engedu.ghost
 
 /**
  * This is the shared interface for the Ghost Dictionary.
@@ -22,9 +21,12 @@ package com.google.engedu.ghost;
  * that uses a tree) and to switch easily between these different
  * implementations in our activity.
  */
-public interface GhostDictionary {
-    public final static int MIN_WORD_LENGTH = 4;
-    boolean isWord(String word);
-    String getAnyWordStartingWith(String prefix);
-    String getGoodWordStartingWith(String prefix);
+interface GhostDictionary {
+    fun isWord(word: String): Boolean
+    fun getAnyWordStartingWith(prefix: String): String?
+    fun getGoodWordStartingWith(prefix: String): String?
+
+    companion object {
+        const val MIN_WORD_LENGTH = 4
+    }
 }

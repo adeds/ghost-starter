@@ -12,107 +12,99 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.google.engedu.ghost
 
-package com.google.engedu.ghost;
+import android.os.Bundle
+import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import by.kirich1409.viewbindingdelegate.viewBinding
+import com.google.engedu.ghost.databinding.ActivityGhostBinding
+import java.util.*
 
-import android.content.res.AssetManager;
-import android.os.Bundle;
-import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
+class GhostActivity : AppCompatActivity(R.layout.activity_ghost) {
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Random;
-
-
-public class GhostActivity extends AppCompatActivity {
-    private static final String COMPUTER_TURN = "Computer's turn";
-    private static final String USER_TURN = "Your turn";
-    private GhostDictionary dictionary;
-    private boolean userTurn = false;
-    private Random random = new Random();
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ghost);
-        AssetManager assetManager = getAssets();
+    private val binding by viewBinding(ActivityGhostBinding::bind, R.id.ghost)
+    private val dictionary: GhostDictionary? = null
+    private var userTurn = false
+    private val random = Random()
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val assetManager = assets
         /**
-         **
-         **  YOUR CODE GOES HERE
-         **
-         **/
-        onStart(null);
+         *
+         * YOUR CODE GOES HERE
+         *
+         */
+        onStart(null)
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_ghost, menu);
-        return true;
+        menuInflater.inflate(R.menu.menu_ghost, menu)
+        return true
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+        val id = item.itemId
+        return if (id == R.id.action_settings) {
+            true
+        } else super.onOptionsItemSelected(item)
     }
 
     /**
      * Handler for the "Reset" button.
      * Randomly determines whether the game starts with a user turn or a computer turn.
+     *
      * @param view
      * @return true
      */
-    public boolean onStart(View view) {
-        userTurn = random.nextBoolean();
-        TextView text = (TextView) findViewById(R.id.ghostText);
-        text.setText("");
-        TextView label = (TextView) findViewById(R.id.gameStatus);
+    private fun onStart(view: View?): Boolean {
+        userTurn = random.nextBoolean()
+        val text = findViewById<View>(R.id.ghostText) as TextView
+        text.text = ""
+        val label = findViewById<View>(R.id.gameStatus) as TextView
         if (userTurn) {
-            label.setText(USER_TURN);
+            label.text = USER_TURN
         } else {
-            label.setText(COMPUTER_TURN);
-            computerTurn();
+            label.text = COMPUTER_TURN
+            computerTurn()
         }
-        return true;
+        return true
     }
 
-    private void computerTurn() {
-        TextView label = (TextView) findViewById(R.id.gameStatus);
+    private fun computerTurn() {
+        val label = findViewById<View>(R.id.gameStatus) as TextView
         // Do computer turn stuff then make it the user's turn again
-        userTurn = true;
-        label.setText(USER_TURN);
+        userTurn = true
+        label.text = USER_TURN
     }
 
     /**
      * Handler for user key presses.
+     *
      * @param keyCode
      * @param event
      * @return whether the key stroke was handled.
      */
-    @Override
-    public boolean onKeyUp(int keyCode, KeyEvent event) {
+    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
         /**
-         **
-         **  YOUR CODE GOES HERE
-         **
-         **/
-        return super.onKeyUp(keyCode, event);
+         *
+         * YOUR CODE GOES HERE
+         *
+         */
+        return super.onKeyUp(keyCode, event)
+    }
+
+    companion object {
+        private const val COMPUTER_TURN = "Computer's turn"
+        private const val USER_TURN = "Your turn"
     }
 }

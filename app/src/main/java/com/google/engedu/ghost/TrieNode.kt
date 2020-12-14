@@ -12,33 +12,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.google.engedu.ghost
 
-package com.google.engedu.ghost;
+import java.util.*
 
-import java.util.HashMap;
+class TrieNode {
+    private val children: HashMap<String, TrieNode> = HashMap()
+    private val isWord: Boolean = false
 
-
-public class TrieNode {
-    private HashMap<String, TrieNode> children;
-    private boolean isWord;
-
-    public TrieNode() {
-        children = new HashMap<>();
-        isWord = false;
+    fun add(s: String?) {}
+    fun isWord(s: String?): Boolean {
+        return false
     }
 
-    public void add(String s) {
+    fun getAnyWordStartingWith(s: String?): String? {
+        return null
     }
 
-    public boolean isWord(String s) {
-      return false;
-    }
-
-    public String getAnyWordStartingWith(String s) {
-        return null;
-    }
-
-    public String getGoodWordStartingWith(String s) {
-        return null;
+    fun getGoodWordStartingWith(s: String?): String? {
+        return null
     }
 }

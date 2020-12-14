@@ -12,41 +12,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.google.engedu.ghost
 
-package com.google.engedu.ghost;
+import java.io.BufferedReader
+import java.io.InputStream
+import java.io.InputStreamReader
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+class FastDictionary(wordListStream: InputStream?) : GhostDictionary {
+    private val root: TrieNode
+    override fun isWord(word: String): Boolean {
+        return root.isWord(word)
+    }
 
+    override fun getAnyWordStartingWith(prefix: String): String? {
+        return root.getAnyWordStartingWith(prefix)
+    }
 
-public class FastDictionary implements GhostDictionary {
+    override fun getGoodWordStartingWith(prefix: String): String? {
+        return root.getGoodWordStartingWith(prefix)
+    }
 
-    private TrieNode root;
-
-    public FastDictionary(InputStream wordListStream) throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(wordListStream));
-        root = new TrieNode();
-        String line = null;
-        while((line = in.readLine()) != null) {
-            String word = line.trim();
-            if (word.length() >= MIN_WORD_LENGTH)
-                root.add(line.trim());
+    init {
+        val `in` = BufferedReader(InputStreamReader(wordListStream))
+        root = TrieNode()
+        var line: String?
+        while (`in`.readLine().also { line = it } != null) {
+            val word = line!!.trim { it <= ' ' }
+            if (word.length >= GhostDictionary.MIN_WORD_LENGTH) root.add(line!!.trim { it <= ' ' })
         }
-    }
-    @Override
-    public boolean isWord(String word) {
-        return root.isWord(word);
-    }
-
-    @Override
-    public String getAnyWordStartingWith(String prefix) {
-        return root.getAnyWordStartingWith(prefix);
-    }
-
-    @Override
-    public String getGoodWordStartingWith(String prefix) {
-        return root.getGoodWordStartingWith(prefix);
     }
 }
