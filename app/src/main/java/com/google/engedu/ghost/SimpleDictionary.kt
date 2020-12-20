@@ -18,15 +18,30 @@ import java.io.BufferedReader
 import java.io.InputStream
 import java.io.InputStreamReader
 import java.util.*
+import kotlin.random.Random
 
 class SimpleDictionary(wordListStream: InputStream?) : GhostDictionary {
-    private val words: ArrayList<String>
+    val words: ArrayList<String>
+
     override fun isWord(word: String): Boolean {
         return words.contains(word)
     }
 
     override fun getAnyWordStartingWith(prefix: String): String? {
-        return null
+        val length = prefix.length
+        val result = words.filter {
+            it.length >= length
+                    && it.substring(0, length) == prefix
+                    && !isWord(it.substring(0, length + 1))
+
+        }
+
+        return if (result.isNotEmpty())
+            if (result.size == 1) return result[0]
+            else {
+                result[Random.nextInt(result.size - 1)].substring(0, length + 1)
+            }
+        else null
     }
 
     override fun getGoodWordStartingWith(prefix: String): String {
@@ -39,8 +54,13 @@ class SimpleDictionary(wordListStream: InputStream?) : GhostDictionary {
         words = ArrayList()
         var line: String?
         while (`in`.readLine().also { line = it } != null) {
-            val word = line!!.trim { it <= ' ' }
-            if (word.length >= GhostDictionary.MIN_WORD_LENGTH) words.add(line!!.trim { it <= ' ' })
+            val word = line?.trim { it <= ' ' }
+            if (word != null) {
+                if (word.length >= GhostDictionary.MIN_WORD_LENGTH)
+                    line?.trim { it <= ' ' }?.let {
+                        words.add(it)
+                    }
+            }
         }
     }
 }

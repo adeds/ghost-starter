@@ -14,33 +14,54 @@
  */
 package com.google.engedu.ghost
 
+import android.content.Context
 import android.os.Bundle
-import android.view.KeyEvent
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
-import android.widget.TextView
+import android.util.Log
+import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.engedu.ghost.databinding.ActivityGhostBinding
+import java.io.IOException
 import java.util.*
 
-class GhostActivity : AppCompatActivity(R.layout.activity_ghost) {
+class GhostActivity : AppCompatActivity() {
 
-    private val binding by viewBinding(ActivityGhostBinding::bind, R.id.ghost)
-    private val dictionary: GhostDictionary? = null
-    private var userTurn = false
+    private lateinit var binding: ActivityGhostBinding
+    private lateinit var dictionary: GhostDictionary
+    private val imm by lazy { getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager }
+
+    private var userTurn = true
+    private var word = ""
     private val random = Random()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityGhostBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         val assetManager = assets
+        try {
+            dictionary = SimpleDictionary(assetManager.open("words.txt"))
+        } catch (e: IOException) {
+            Toast.makeText(this, "${e.message}", Toast.LENGTH_SHORT).show()
+        }
         /**
          *
          * YOUR CODE GOES HERE
          *
          */
-        onStart(null)
+        binding.clickListener()
+    }
+
+    private fun ActivityGhostBinding.clickListener() {
+        btnRestart.setOnClickListener {
+            word = ""
+            binding.ghostText.text = ""
+            startGame()
+        }
+        btnChallenge.setOnClickListener { }
+
+        btnShowKeyboard.setOnClickListener { showKeyboard() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -66,25 +87,38 @@ class GhostActivity : AppCompatActivity(R.layout.activity_ghost) {
      * @param view
      * @return true
      */
-    private fun onStart(view: View?): Boolean {
-        userTurn = random.nextBoolean()
-        val text = findViewById<View>(R.id.ghostText) as TextView
-        text.text = ""
-        val label = findViewById<View>(R.id.gameStatus) as TextView
+    private fun startGame() {
         if (userTurn) {
-            label.text = USER_TURN
+            binding.gameStatus.text = USER_TURN
         } else {
-            label.text = COMPUTER_TURN
+            binding.gameStatus.text = COMPUTER_TURN
             computerTurn()
         }
-        return true
     }
 
+    private fun showKeyboard() = imm.toggleSoftInputFromWindow(
+        binding.ghost.applicationWindowToken,
+        InputMethodManager.SHOW_FORCED,
+        0
+    )
+
     private fun computerTurn() {
-        val label = findViewById<View>(R.id.gameStatus) as TextView
-        // Do computer turn stuff then make it the user's turn again
-        userTurn = true
-        label.text = USER_TURN
+        if (dictionary.isWord(word)) {
+            binding.gameStatus.text = "computer win by challenge"
+        } else {
+            dictionary.getAnyWordStartingWith(word).let {
+                if (it == null) {
+                    binding.gameStatus.text = "computer win by challenge"
+                } else {
+                    word = it
+                    binding.ghostText.text = word
+                    // Do computer turn stuff then make it the user's turn again
+                    userTurn = true
+                    startGame()
+                }
+            }
+
+        }
     }
 
     /**
@@ -95,11 +129,18 @@ class GhostActivity : AppCompatActivity(R.layout.activity_ghost) {
      * @return whether the key stroke was handled.
      */
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
-        /**
-         *
-         * YOUR CODE GOES HERE
-         *
-         */
+        Log.e("onKeyUp", keyCode.toString())
+        if (keyCode in 28..54) {
+            word += event.unicodeChar.toChar()
+            binding.ghostText.text = word
+
+            if (word.length >= GhostDictionary.MIN_WORD_LENGTH) {
+                binding.gameStatus.text = "user win"
+            } else {
+                userTurn = false
+                startGame()
+            }
+        }
         return super.onKeyUp(keyCode, event)
     }
 

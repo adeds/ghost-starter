@@ -37,8 +37,10 @@ class FastDictionary(wordListStream: InputStream?) : GhostDictionary {
         root = TrieNode()
         var line: String?
         while (`in`.readLine().also { line = it } != null) {
-            val word = line!!.trim { it <= ' ' }
-            if (word.length >= GhostDictionary.MIN_WORD_LENGTH) root.add(line!!.trim { it <= ' ' })
+            val word = line?.trim { it <= ' ' }
+            if (word != null) {
+                if (word.length >= GhostDictionary.MIN_WORD_LENGTH) root.add(line?.trim { it <= ' ' })
+            }
         }
     }
 }
