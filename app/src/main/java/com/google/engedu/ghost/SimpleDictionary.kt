@@ -28,25 +28,28 @@ class SimpleDictionary(wordListStream: InputStream?) : GhostDictionary {
     }
 
     override fun getAnyWordStartingWith(prefix: String): String? {
-        val length = prefix.length
-        val result = words.filter {
-            it.length >= length
-                    && it.substring(0, length) == prefix
-                    && !isWord(it.substring(0, length + 1))
-
-        }
-
-        return if (result.isNotEmpty())
-            if (result.size == 1) return result[0]
-            else {
-                result[Random.nextInt(result.size - 1)].substring(0, length + 1)
-            }
-        else null
+        return binarySearch(prefix)?.substring(0, prefix.length + 1)
     }
 
     override fun getGoodWordStartingWith(prefix: String): String {
         val selected: String? = null
         return selected!!
+    }
+
+    fun binarySearch(x: String): String? {
+        var low = 0
+        var high = words.size - 1
+        while (low < high) {
+            val m = low + (high - low) / 2
+            val res = x.compareTo(words[m])
+
+            //is found with param?
+            if (words[m].startsWith(x)) return words[m]
+
+            if (res > 0) low = m + 1
+            else high = m - 1
+        }
+        return null
     }
 
     init {

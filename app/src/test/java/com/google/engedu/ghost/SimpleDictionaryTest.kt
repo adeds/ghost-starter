@@ -21,7 +21,13 @@ class SimpleDictionaryTest {
 
     @Test
     fun `get Word from start word`() {
-        val anagram = dictionary.getAnyWordStartingWith("boq")
+        val anagram = dictionary.getAnyWordStartingWith("stop")
+        println(anagram)
+    }
+
+    @Test
+    fun `test binary`() {
+        val anagram = dictionary.binarySearch("stop")
         println(anagram)
     }
 
