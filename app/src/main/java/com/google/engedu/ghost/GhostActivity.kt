@@ -41,7 +41,7 @@ class GhostActivity : AppCompatActivity() {
 
         val assetManager = assets
         try {
-            dictionary = SimpleDictionary(assetManager.open("words.txt"))
+            dictionary = FastDictionary(assetManager.open("words.txt"))
         } catch (e: IOException) {
             Toast.makeText(this, "${e.message}", Toast.LENGTH_SHORT).show()
         }

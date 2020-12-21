@@ -19,13 +19,14 @@ import java.io.InputStream
 import java.io.InputStreamReader
 
 class FastDictionary(wordListStream: InputStream?) : GhostDictionary {
-    private val root: TrieNode
+    val root: TrieNode
+
     override fun isWord(word: String): Boolean {
         return root.isWord(word)
     }
 
     override fun getAnyWordStartingWith(prefix: String): String? {
-        return root.getAnyWordStartingWith(prefix)
+        return prefix + root.getAnyWordStartingWith(prefix)
     }
 
     override fun getGoodWordStartingWith(prefix: String): String? {
@@ -39,7 +40,10 @@ class FastDictionary(wordListStream: InputStream?) : GhostDictionary {
         while (`in`.readLine().also { line = it } != null) {
             val word = line?.trim { it <= ' ' }
             if (word != null) {
-                if (word.length >= GhostDictionary.MIN_WORD_LENGTH) root.add(line?.trim { it <= ' ' })
+                if (word.length >= GhostDictionary.MIN_WORD_LENGTH) {
+                    val trimed = line?.trim { it <= ' ' }
+                    root.add(trimed)
+                }
             }
         }
     }
